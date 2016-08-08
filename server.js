@@ -1,7 +1,6 @@
 import path from 'path';
 import express from 'express';
 import _ from 'lodash';
-import nodeSassMiddleware from 'node-sass-middleware';
 import {generateSheet, generateChoicesForSheet, getSheetSchema} from './sheets';
 
 const app = express();
