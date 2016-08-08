@@ -13,11 +13,11 @@ export function generateSheet(sheetId) {
 }
 
 // Given a sheet and critera, generate a list of matching resturaunts
-export function generateChoiceForSheet(sheet, criteria={}) {
+export function generateChoicesForSheet(sheet, criteria={}, args={}) {
   const getRows = thenify(sheet.getRows);
-  return getRows({
+  return getRows(Object.assign({
     offset: 1, // ignore the header row
-  }).then(rows => {
+  }, args)).then(rows => {
     return rows.filter(row => {
       // only return valid venues
       return row.venue && row.venue.length > 0;
@@ -33,8 +33,16 @@ export function generateChoiceForSheet(sheet, criteria={}) {
       // remove bogus rows
       delete row._xml;
       delete row._links;
+      delete row.save;
+      delete row.del;
       return row;
     });
+  });
+}
+
+export function getSheetSchema(sheet) {
+  return generateChoicesForSheet(sheet, {}, {limit: 1}).then(([choice]) => {
+    return Object.keys(choice);
   });
 }
 
