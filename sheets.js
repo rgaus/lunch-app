@@ -24,7 +24,7 @@ export function generateChoicesForSheet(sheet, criteria={}, args={}) {
     }).filter(row => {
       // all matching choices that are defined
       for (let field in row) {
-        if (criteria[field] !== undefined && criteria[field] !== row[field]) {
+        if (criteria[field] !== undefined && criteria[field].toLowerCase() !== row[field].toLowerCase()) {
           return false;
         }
       }
@@ -40,13 +40,9 @@ export function generateChoicesForSheet(sheet, criteria={}, args={}) {
   });
 }
 
+// Return the fields that can be used to refine the choice
 export function getSheetSchema(sheet) {
   return generateChoicesForSheet(sheet, {}, {limit: 1}).then(([choice]) => {
     return Object.keys(choice);
   });
-}
-
-// Return a random item from an array
-export function sample(array) {
-  return array[Math.round(Math.random() * array.length) - 1];
 }

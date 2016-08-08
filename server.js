@@ -1,19 +1,24 @@
 import express from 'express';
-import {generateSheet, generateChoicesForSheet, sample, getSheetSchema} from './sheets';
+import {generateSheet, generateChoicesForSheet, getSheetSchema} from './sheets';
+import _ from 'lodash';
 
 const app = express();
+app.set('view engine', 'ejs');
 
-app.get('/sheets/:sheetId/schema', (req, res) => {
-  generateSheet(req.params.sheetId).then(getSheetSchema).then(fields => {
-    res.json({fields});
-  });
+app.get('/sheets/:sheetId', (req, res) => {
+  if (req.query.pick) {
+    // Pick the place
+    generateSheet(req.params.sheetId)
+    .then(sheet => generateChoicesForSheet(sheet, req.query))
+    .then(choices => {
+      res.render('chosenVenue', {place: _.sample(choices)});
+    });
+  } else {
+    // Choose criteria
+    generateSheet(req.params.sheetId).then(getSheetSchema).then(fields => {
+      res.render('venuePicker', {fields});
+    });
+  }
 });
-
-// Usage
-// generateSheet('1DnHlU9IAN5-GRj3UXCnePmT02Fl2xD7fbvCx1uLKzeM').then(sheet => {
-//   return generateChoicesForSheet(sheet);
-// }).then(choices => {
-//   console.log("The choice is", choices);
-// }).catch(console.error.bind(console));
 
 app.listen(process.env.PORT || 8000);

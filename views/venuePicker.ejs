@@ -1,0 +1,18 @@
+<h1>Lunch and Company</h1>
+<p>Enter the criteria to filter by:</p>
+
+<!-- All form fields -->
+<form method="GET">
+  <input type="hidden" name="pick" value="true" />
+
+  <% fields.forEach(function(field) { %>
+    <% if (field !== "id" && field !== "venue") { %>
+      <p class="form-group">
+        <label for="<%= field %>"><%= field %></label>
+        <input type="text" name="<%= field %>" />
+      </p>
+    <% } %>
+  <% }) %>
+
+  <input type="submit" />
+</form>
