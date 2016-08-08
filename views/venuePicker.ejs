@@ -1,7 +1,6 @@
+<% include partials/header %>
+<a class="a-source" href="https://docs.google.com/spreadsheets/d/<%= sheetId %>">Edit the source</a>
 <h1>Where should we eat?</h1>
-<p>Enter the criteria to filter by:</p>
-
-<a href="https://docs.google.com/spreadsheets/d/<%= sheetId %>">Or add to the list of places</a>
 
 <!-- All form fields -->
 <form method="GET">
@@ -11,7 +10,7 @@
     <% if (field !== "id" && field !== "venue") { %>
       <p class="form-group">
         <label for="<%= field %>"><%= field %></label>
-        <select name="<%= field %>">
+        <select name="<%= field %>" class="form-control">
         <% fields[field].forEach(function(f) { %>
           <option value="<%= f %>"><%= f %></option>
         <% }) %>
@@ -20,5 +19,6 @@
     <% } %>
   <% } %>
 
-  <input type="submit" />
+  <input type="submit" class="btn btn-primary" />
 </form>
+<% include partials/footer %>

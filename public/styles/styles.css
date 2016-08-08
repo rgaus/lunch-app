@@ -1,0 +1,19 @@
+/* ---------------------------------------------------------------------------- */
+/* The container */
+/* -----------------------------------------------------------------------------*/
+
+body {
+  background-color: #efefef;
+}
+
+.container {
+  max-width: 800px;
+  margin: 2em auto;
+  background-color: #fff;
+  border: 1px solid #DDD;
+  border-top: 5px solid #EF6461;
+}
+
+.a-source {
+  float: right;
+}

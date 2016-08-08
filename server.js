@@ -1,9 +1,12 @@
+import path from 'path';
 import express from 'express';
-import {generateSheet, generateChoicesForSheet, getSheetSchema} from './sheets';
 import _ from 'lodash';
+import nodeSassMiddleware from 'node-sass-middleware';
+import {generateSheet, generateChoicesForSheet, getSheetSchema} from './sheets';
 
 const app = express();
 app.set('view engine', 'ejs');
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Notes
 // For this to work, you need to make the sheet public with File -> Publish to the Web
