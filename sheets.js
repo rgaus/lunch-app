@@ -42,7 +42,24 @@ export function generateChoicesForSheet(sheet, criteria={}, args={}) {
 
 // Return the fields that can be used to refine the choice
 export function getSheetSchema(sheet) {
-  return generateChoicesForSheet(sheet, {}, {limit: 1}).then(([choice]) => {
-    return Object.keys(choice);
+  return generateChoicesForSheet(sheet, {}).then((choices) => {
+    let schema = {};
+    choices.forEach(choice => {
+      for (let key in choice) {
+        let choiceKey = choice[key].toLowerCase(); // lowercase all values
+
+        if (key === "id" || key === "venue") {
+          continue;
+        } else if (Array.isArray(schema[key]) && schema[key].indexOf(choiceKey) === -1) {
+          // The array has already been started, append unique values
+          schema[key].push(choiceKey);
+        } else if (typeof schema[key] === 'undefined' ) {
+          // Create a new sub-array for all possible schema values
+          schema[key] = [choiceKey];
+        }
+      }
+    });
+
+    return schema;
   });
 }

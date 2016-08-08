@@ -5,14 +5,18 @@
 <form method="GET">
   <input type="hidden" name="pick" value="true" />
 
-  <% fields.forEach(function(field) { %>
+  <% for (var field in fields) { %>
     <% if (field !== "id" && field !== "venue") { %>
       <p class="form-group">
         <label for="<%= field %>"><%= field %></label>
-        <input type="text" name="<%= field %>" />
+        <select name="<%= field %>">
+        <% fields[field].forEach(function(f) { %>
+          <option value="<%= f %>"><%= f %></option>
+        <% }) %>
+        </select>
       </p>
     <% } %>
-  <% }) %>
+  <% } %>
 
   <input type="submit" />
 </form>

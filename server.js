@@ -12,12 +12,12 @@ app.get('/sheets/:sheetId', (req, res) => {
     .then(sheet => generateChoicesForSheet(sheet, req.query))
     .then(choices => {
       res.render('chosenVenue', {place: _.sample(choices)});
-    });
+    }).catch(console.error.bind(console));
   } else {
     // Choose criteria
     generateSheet(req.params.sheetId).then(getSheetSchema).then(fields => {
       res.render('venuePicker', {fields});
-    });
+    }).catch(console.error.bind(console));
   }
 });
 
