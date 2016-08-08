@@ -5,6 +5,8 @@ import _ from 'lodash';
 const app = express();
 app.set('view engine', 'ejs');
 
+app.get('/', (req, res) => res.redirect('/sheets/1DnHlU9IAN5-GRj3UXCnePmT02Fl2xD7fbvCx1uLKzeM'));
+
 app.get('/sheets/:sheetId', (req, res) => {
   if (req.query.pick) {
     // Pick the place
