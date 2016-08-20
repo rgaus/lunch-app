@@ -4,9 +4,11 @@ import Select from 'react-select';
 
 import changeField from 'actions/changeField';
 import choiceResponse from 'actions/choiceResponse';
+import loadingPick from 'actions/loadingPick';
 
-export function App({handle, fieldValues, fieldSchema, changeField, getChoice, choice}) {
+export function App({handle, fieldValues, fieldSchema, changeField, getChoice, choice, loading}) {
   return <div className="container">
+    {loading.fields ? <span className="loading">Loading Fields...</span> : null}
     {Object.keys(fieldValues).map((field, ct) => {
       let options = fieldSchema[field].map(f => {
         return {value: f, label: f.length === 0 ? '(empty)' : f};
@@ -28,6 +30,7 @@ export function App({handle, fieldValues, fieldSchema, changeField, getChoice, c
     </button>
 
     <hr />
+    {loading.picks ? <span className="loading">Loading Pick...</span> : null}
     {choice.venue ? <FinalPick pick={choice} /> : null}
   </div>
 };
@@ -44,6 +47,7 @@ export default connect((state, props) => {
     fieldValues: state.fields,
     fieldSchema: state.fieldSchema,
     choice: state.choice,
+    loading: state.loading,
   };
 }, dispatch => {
   return {
@@ -55,6 +59,7 @@ export default connect((state, props) => {
       }
     },
     getChoice(handle, options) {
+      dispatch(loadingPick());
       fetch(`/${handle}/pick`, {
         method: 'POST',
         headers: {'content-type': 'appication/json', accept: 'appication/json'},

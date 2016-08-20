@@ -10,6 +10,7 @@ import App from 'components/App';
 import changeHandle from 'actions/handle';
 import fetchFields from 'actions/fetchFields';
 import sendError from 'actions/sendError';
+import loadingFields from 'actions/loadingFields';
 
 let store = createStore(pipeApp, {
   fieldSchema: {
@@ -34,6 +35,7 @@ hashHistory.listen(loc => {
   store.dispatch(changeHandle(handle));
 
   // get the template for the handle
+  store.dispatch(loadingFields());
   fetch(`/${handle}/fields`).then(resp => resp.json()).then(json => {
     if (json.error) {
       store.dispatch(sendError(json.error));
