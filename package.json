@@ -7,16 +7,17 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "NODE_PATH=js/ babel-node js/server.js",
-    "build:js": "./node_modules/.bin/browserify public/js/scripts.js -t [babelify] -d > public/bundle.js",
+    "build:js": "NODE_PATH=public/js ./node_modules/.bin/browserify public/js/scripts.js -t [babelify] -d > public/bundle.js",
     "build:css": "./node_modules/.bin/node-sass --source-map true public/styles/styles.scss > public/bundle.css",
     "serve": "npm run build:js && npm run build:css && npm start",
-    "watch": "nodemon --exec 'npm run serve' -e 'js scss' -w js/ -w scss/"
+    "watch": "nodemon --exec 'npm run serve' -e 'js scss' -w js/ -w public/js"
   },
   "author": "Ryan Gaus <rgaus.net>",
   "license": "ISC",
   "dependencies": {
     "babel-cli": "^6.11.4",
     "babel-preset-es2015": "^6.13.2",
+    "babel-preset-react": "^6.11.1",
     "bluebird": "^3.4.1",
     "body-parser": "^1.15.2",
     "ejs": "^2.5.1",
@@ -27,6 +28,12 @@
     "mongoose": "^4.5.9",
     "passport": "^0.3.2",
     "passport-twitter": "^1.0.4",
+    "react": "^15.3.1",
+    "react-bootstrap": "^0.29.5",
+    "react-dom": "^15.1.0",
+    "react-redux": "^4.4.5",
+    "react-router": "^2.4.1",
+    "redux": "^3.5.2",
     "thenify": "^3.2.0"
   },
   "devDependencies": {

@@ -1,5 +1,5 @@
-import path from 'path';
 import express from 'express';
+import path from 'path';
 import _ from 'lodash';
 import {generateSheet, generateChoicesForSheet, getSheetSchema} from './sheets';
 import isAuthenticated from 'auth/check';
@@ -7,9 +7,8 @@ import bodyParser from 'body-parser';
 
 const app = express();
 app.set('view engine', 'ejs');
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '..', 'public')));
 
-app.get('/', (req, res) => res.render('index'))
 app.get('/setup', (req, res) => res.redirect('/setup/login'));
 
 // ----------------------------------------------------------------------------
@@ -68,26 +67,10 @@ app.post('/setup/spreadsheet', bodyParser.urlencoded(), (req, res) => {
 // Notes
 // For this to work, you need to make the sheet public with File -> Publish to the Web
 // This means no api key is needed (no rate limit) and auth sucks to use in the googl ecosystem.
-// app.get('/', (req, res) => res.redirect('/sheets/1DnHlU9IAN5-GRj3UXCnePmT02Fl2xD7fbvCx1uLKzeM'));
-app.get('/density', (req, res) => res.redirect('/sheets/1frVwofgRgZYBo5NCGnPV2eNQB8gKvLEon21T6TGG5b0'));
 
-app.get('/sheets/:sheetId', (req, res) => {
-  if (req.query.pick) {
-    // Pick the place
-    generateSheet(req.params.sheetId)
-    .then(sheet => generateChoicesForSheet(sheet, req.query))
-    .then(choices => {
-      res.render('chosenVenue', {place: _.sample(choices)});
-    }).catch(console.error.bind(console));
-  } else {
-    // Choose criteria
-    generateSheet(req.params.sheetId).then(getSheetSchema).then(fields => {
-      res.render('venuePicker', {fields, sheetId: req.params.sheetId});
-    }).catch(console.error.bind(console));
-  }
-});
-
-// The api
+// ----------------------------------------------------------------------------
+// The API
+// ----------------------------------------------------------------------------
 app.get('/:handle/fields', (req, res) => {
   User.findOne({handle: req.params.handle}).exec().then(model => {
     if (!model.spreadsheet) {
