@@ -1,3 +1,3 @@
-export default function chocieResponse(response) {
+export default function choiceResponse(response) {
   return {type: 'CHOICE_RESPONSE', response};
 }

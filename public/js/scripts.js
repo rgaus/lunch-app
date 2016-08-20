@@ -2,11 +2,14 @@ import React from 'react';
 import {render} from 'react-dom';
 import {Provider} from 'react-redux';
 import {createStore, compose, applyMiddleware} from 'redux';
+import { Router, Route, hashHistory } from 'react-router';
 
 import pipeApp from 'reducers/reducer';
 import App from 'components/App';
 
 import changeHandle from 'actions/handle';
+import fetchFields from 'actions/fetchFields';
+import sendError from 'actions/sendError';
 
 let store = createStore(pipeApp, {
   fieldSchema: {
@@ -24,12 +27,27 @@ let store = createStore(pipeApp, {
   window.devToolsExtension ? window.devToolsExtension() : f => f
 ));
 
-// Update handle
-store.dispatch(changeHandle(location.hash.slice(1)));
+// update handle and associated stuff
+hashHistory.listen(loc => {
+  // change the handle
+  let handle = loc.pathname.slice(1);
+  store.dispatch(changeHandle(handle));
+
+  // get the template for the handle
+  fetch(`/${handle}/fields`).then(resp => resp.json()).then(json => {
+    if (json.error) {
+      store.dispatch(sendError(json.error));
+    } else {
+      store.dispatch(fetchFields(json.fields));
+    }
+  });
+});
 
 render(
   <Provider store={store}>
-    <App />
+    <Router history={hashHistory}>
+      <Route path="/:handle" component={App} />
+    </Router>
   </Provider>,
   document.getElementById('root')
 );

@@ -3,6 +3,6 @@ export default function fields(state={}, action) {
     case 'CHOICE_RESPONSE':
       return action.response;
     default:
-      return {};
+      return state;
   }
 }

@@ -5,10 +5,10 @@ export default function fields(state={}, action) {
 
     case 'FETCH_FIELDS':
       let fieldTemplates = {};
-      action.fields.forEach(field => fieldTemplates[field] = '');
+      Object.keys(action.fields).forEach(field => fieldTemplates[field] = '*'); // Set default
       return Object.assign({}, state, fieldTemplates);
 
     default:
-      return {};
+      return state;
   }
 }

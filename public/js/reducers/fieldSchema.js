@@ -3,6 +3,6 @@ export default function fieldSchema(state={}, action) {
     case 'FETCH_FIELDS':
       return action.fields;
     default:
-      return {};
+      return state;
   }
 }

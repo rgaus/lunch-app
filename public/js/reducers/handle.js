@@ -3,6 +3,6 @@ export default function handle(state='', action) {
     case 'CHANGE_HANDLE':
       return action.handle;
     default:
-      return '';
+      return state;
   }
 }
