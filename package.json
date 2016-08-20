@@ -6,7 +6,11 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "babel-node server.js"
+    "start": "babel-node server.js",
+    "build:js": "./node_modules/.bin/browserify public/js/scripts.js -t [babelify] -d > public/bundle.js",
+    "build:css": "./node_modules/.bin/node-sass --source-map true public/styles/styles.scss > public/bundle.css",
+    "serve": "npm run build:js && npm run build:css && npm start",
+    "watch": "nodemon --exec 'npm run serve' -e 'js scss' -w js/ -w scss/"
   },
   "author": "Ryan Gaus <rgaus.net>",
   "license": "ISC",
@@ -19,5 +23,9 @@
     "google-spreadsheet": "^2.0.3",
     "lodash": "^4.14.1",
     "thenify": "^3.2.0"
+  },
+  "devDependencies": {
+    "babelify": "^7.3.0",
+    "browserify": "^13.1.0"
   }
 }
