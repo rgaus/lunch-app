@@ -2,6 +2,8 @@ import path from 'path';
 import express from 'express';
 import _ from 'lodash';
 import {generateSheet, generateChoicesForSheet, getSheetSchema} from './sheets';
+import isAuthenticated from 'auth/check';
+import bodyParser from 'body-parser';
 
 const app = express();
 app.set('view engine', 'ejs');
@@ -24,22 +26,43 @@ import passport from 'passport';
 import session from 'express-session';
 import strategy from 'auth/strategy';
 import serialize from 'auth/serialize';
+app.use(session({secret: process.env.SESSION_SECRET}));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(session({secret: process.env.SESSION_SECRET}));
 passport.use(strategy(User));
 serialize(User, passport);
 
-
+// ----------------------------------------------------------------------------
+// Onboarding flow
+// ----------------------------------------------------------------------------
+// Step 1: login
 app.get('/setup/login', passport.authenticate('twitter', {
   successRedirect: '/',
   failureRedirect: '/setup/login'
 }));
+
 app.get("/callback/twitter", passport.authenticate("twitter", {
   failureRedirect: '/login',
   failureFlash: true
-}), function(req, res) {
-  res.redirect('/setup/spreadsheet');
+}), (req, res) => {
+  if (req.user.spreadsheet) {
+    res.redirect(`/${req.user.handle}`);
+  } else {
+    res.redirect('/setup/spreadsheet')
+  }
+});
+
+// Step 2: setup the spreadsheet
+app.get('/setup/spreadsheet', isAuthenticated, (req, res) => res.render('configureSpreadsheet'));
+app.post('/setup/spreadsheet', bodyParser.urlencoded(), (req, res) => {
+  let match = req.body.spreadsheet.match(/^https:\/\/docs.google.com\/spreadsheets\/d\/(.+)$/);
+  if (match) {
+    User.update({_id: req.user._id}, {spreadsheet: match[1]}).exec().then(model => {
+      res.redirect(`/${req.user.handle}`);
+    }).catch(err => res.status(500).send({error: 'database error'}));
+  } else {
+    res.status(400).send({error: 'please enter a valid google sheets url'});
+  }
 });
 
 // Notes
@@ -62,6 +85,27 @@ app.get('/sheets/:sheetId', (req, res) => {
       res.render('venuePicker', {fields, sheetId: req.params.sheetId});
     }).catch(console.error.bind(console));
   }
+});
+
+// Load a selection
+app.get('/:handle', (req, res) => {
+  User.findOne({handle: req.params.handle}).exec().then(model => {
+    if (!model.spreadsheet) {
+      res.status(400).send({error: 'No spreadsheet was defined for this user.'});
+    } else if (req.query.pick) {
+      // Pick the place
+      generateSheet(model.spreadsheet)
+      .then(sheet => generateChoicesForSheet(sheet, req.query))
+      .then(choices => {
+        res.render('chosenVenue', {place: _.sample(choices)});
+      }).catch(console.error.bind(console));
+    } else {
+      // Choose criteria
+      generateSheet(model.spreadsheet).then(getSheetSchema).then(fields => {
+        res.render('venuePicker', {fields, sheetId: req.params.sheetId});
+      }).catch(console.error.bind(console));
+    }
+  }).catch(err => res.status(404).send({error: `No such user ${req.params.handle}`}));
 });
 
 app.listen(process.env.PORT || 8000);
