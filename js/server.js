@@ -8,7 +8,39 @@ app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => res.render('index'))
-app.get('/add', (req, res) => res.render('addNewItem'))
+app.get('/setup', (req, res) => res.redirect('/setup/login'));
+
+// ----------------------------------------------------------------------------
+// Mongo stuff
+// ----------------------------------------------------------------------------
+import mongoose from 'mongoose';
+mongoose.connect(process.env.MONGO_URI);
+import User from 'models/User';
+
+// ----------------------------------------------------------------------------
+// Passport stuff
+// ----------------------------------------------------------------------------
+import passport from 'passport';
+import session from 'express-session';
+import strategy from 'auth/strategy';
+import serialize from 'auth/serialize';
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(session({secret: process.env.SESSION_SECRET}));
+passport.use(strategy(User));
+serialize(User, passport);
+
+
+app.get('/setup/login', passport.authenticate('twitter', {
+  successRedirect: '/',
+  failureRedirect: '/setup/login'
+}));
+app.get("/callback/twitter", passport.authenticate("twitter", {
+  failureRedirect: '/login',
+  failureFlash: true
+}), function(req, res) {
+  res.redirect('/setup/spreadsheet');
+});
 
 // Notes
 // For this to work, you need to make the sheet public with File -> Publish to the Web

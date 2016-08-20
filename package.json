@@ -3,10 +3,10 @@
   "private": true,
   "version": "1.0.0",
   "description": "The REAL lunch and company",
-  "main": "server.js",
+  "main": "js/server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "babel-node server.js",
+    "start": "NODE_PATH=js/ babel-node js/server.js",
     "build:js": "./node_modules/.bin/browserify public/js/scripts.js -t [babelify] -d > public/bundle.js",
     "build:css": "./node_modules/.bin/node-sass --source-map true public/styles/styles.scss > public/bundle.css",
     "serve": "npm run build:js && npm run build:css && npm start",
@@ -20,8 +20,12 @@
     "bluebird": "^3.4.1",
     "ejs": "^2.5.1",
     "express": "^4.14.0",
+    "express-session": "^1.14.0",
     "google-spreadsheet": "^2.0.3",
     "lodash": "^4.14.1",
+    "mongoose": "^4.5.9",
+    "passport": "^0.3.2",
+    "passport-twitter": "^1.0.4",
     "thenify": "^3.2.0"
   },
   "devDependencies": {
