@@ -87,25 +87,31 @@ app.get('/sheets/:sheetId', (req, res) => {
   }
 });
 
-// Load a selection
-app.get('/:handle', (req, res) => {
+// The api
+app.get('/:handle/fields', (req, res) => {
   User.findOne({handle: req.params.handle}).exec().then(model => {
     if (!model.spreadsheet) {
-      res.status(400).send({error: 'No spreadsheet was defined for this user.'});
-    } else if (req.query.pick) {
-      // Pick the place
-      generateSheet(model.spreadsheet)
-      .then(sheet => generateChoicesForSheet(sheet, req.query))
-      .then(choices => {
-        res.render('chosenVenue', {place: _.sample(choices)});
-      }).catch(console.error.bind(console));
+      return res.status(400).send({error: 'No spreadsheet was defined for this user.'}); 
     } else {
       // Choose criteria
-      generateSheet(model.spreadsheet).then(getSheetSchema).then(fields => {
-        res.render('venuePicker', {fields, sheetId: req.params.sheetId});
-      }).catch(console.error.bind(console));
+      return generateSheet(model.spreadsheet);
     }
+  }).then(getSheetSchema).then(fields => {
+    res.send({fields})
   }).catch(err => res.status(404).send({error: `No such user ${req.params.handle}`}));
 });
+app.post('/:handle/pick', (req, res) => {
+  User.findOne({handle: req.params.handle}).exec().then(model => {
+    if (!model.spreadsheet) {
+      return res.status(400).send({error: 'No spreadsheet was defined for this user.'}); 
+    } else {
+      // Choose criteria
+      return generateSheet(model.spreadsheet);
+    }
+  }).then(sheet => generateChoicesForSheet(sheet, req.body))
+  .then(choices => {
+    res.send({place: _.sample(choices)});
+  }).catch(console.error.bind(console));
+})
 
 app.listen(process.env.PORT || 8000);
