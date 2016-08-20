@@ -11,9 +11,10 @@
       <p class="form-group">
         <label for="<%= field %>"><%= field %></label>
         <select name="<%= field %>" class="form-control">
-        <% fields[field].forEach(function(f) { %>
-          <option value="<%= f %>"><%= f %></option>
-        <% }) %>
+          <option value="*">Any Choice</option>
+          <% fields[field].forEach(function(f) { %>
+            <option value="<%= f %>"><%= f %></option>
+          <% }) %>
         </select>
       </p>
     <% } %>

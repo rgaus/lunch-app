@@ -24,7 +24,11 @@ export function generateChoicesForSheet(sheet, criteria={}, args={}) {
     }).filter(row => {
       // all matching choices that are defined
       for (let field in row) {
-        if (criteria[field] !== undefined && criteria[field].toLowerCase() !== row[field].toLowerCase()) {
+        if (
+          criteria[field] !== undefined &&
+          criteria[field] !== '*' &&
+          criteria[field].toLowerCase() !== row[field].toLowerCase()
+        ) {
           return false;
         }
       }
