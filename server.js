@@ -7,10 +7,13 @@ const app = express();
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.get('/', (req, res) => res.render('index'))
+app.get('/add', (req, res) => res.render('addNewItem'))
+
 // Notes
 // For this to work, you need to make the sheet public with File -> Publish to the Web
 // This means no api key is needed (no rate limit) and auth sucks to use in the googl ecosystem.
-app.get('/', (req, res) => res.redirect('/sheets/1DnHlU9IAN5-GRj3UXCnePmT02Fl2xD7fbvCx1uLKzeM'));
+// app.get('/', (req, res) => res.redirect('/sheets/1DnHlU9IAN5-GRj3UXCnePmT02Fl2xD7fbvCx1uLKzeM'));
 app.get('/density', (req, res) => res.redirect('/sheets/1frVwofgRgZYBo5NCGnPV2eNQB8gKvLEon21T6TGG5b0'));
 
 app.get('/sheets/:sheetId', (req, res) => {
