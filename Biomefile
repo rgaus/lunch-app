@@ -1,6 +1,6 @@
 # This is a Biomefile. It helps you create an environment to run this app.
 # More info at https://github.com/1egoman/biome
-name=lunch-and-company
+name=lunch-app
 GOOGLE_API_CLIENT_ID=
 GOOGLE_API_CLIENT_SECRET=
 GOOGLE_API_PROJECT_ID=
